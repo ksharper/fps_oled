@@ -25,22 +25,36 @@ Adafruit_SH1106G display = Adafruit_SH1106G(128, 64,OLED_MOSI, OLED_CLK, OLED_DC
 void setup()   {
   Serial.begin(9600);
 
-  WiFi.begin(ssid, password);
-  Serial.println("Connecting");
-  while(WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());  
-
-  display.begin(0, true); // we dont use the i2c address but we will reset!
+  display.begin(0, true); 
   display.clearDisplay();
   display.setRotation(2);
   display.display();
 
+  WiFi.begin(ssid, password);
+  Serial.println("Connecting");
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
+  display.setCursor(0, 0);
+  display.setTextWrap(true);
+  display.println("Connecting to WIFI");
+  display.display();
+    
+  while(WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+    display.print(".");
+    display.display();
+  }
+  Serial.println("");
+  Serial.print("Connected to WiFi network with IP Address: ");
+  Serial.println(WiFi.localIP());  
+  display.println("Connnected");
+  display.println(WiFi.localIP());
+  display.display();
+
   Serial.println("Starting connection...");
+  display.setTextSize(2);
+  
   if (client.connect(server, 80)) {
     Serial.println("connected");
     client.println("GET /sse HTTP/1.0");
@@ -51,16 +65,16 @@ void setup()   {
 void loop() {
   if (!client.connected()) {
     client.stop();
-    Serial.println("WIFI disconnected, reconnecting");
+    Serial.println("AIDA64 disconnected, reconnecting");
     
     display.clearDisplay();
-    display.setTextSize(2);
+    display.setTextSize(1);
     display.setTextColor(SH110X_WHITE);
     display.setCursor(0, 0);
-    display.println("WIFI DISCO");
-    display.println("RECONNECTING");
+    display.println("AIDA64");
+    display.println("Disconnected");
+    display.println("Reconnecting");
     display.display();
-    client.stop();
 
     if (client.connect(server, 80)) {
       Serial.println("connected");
